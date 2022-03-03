@@ -30,18 +30,73 @@ class NotesHandler {
   }
 
   getNotesHandler() {
-
+    const notes = this._service.getNotes();
+    return {
+      status: 'success',
+      data: {
+        notes,
+      },
+    };
   }
 
-  getNoteByIdHandler() {
-
+  getNoteByIdHandler(request, h) {
+    try {
+      const {id} = request.params;
+      const note = this._service.getNoteById(id);
+      return {
+        status: 'success',
+        data: {
+          note,
+        },
+      };
+    } catch (error) {
+      const response = h.response({
+        status: 'fail',
+        message: error.message,
+      });
+      response.code(404);
+      return response;
+    }
   }
 
-  putNoteByIdHandler() {
+  putNoteByIdHandler(request, h) {
+    try {
+      const {id} = request.params;
 
+      this._service.editNoteById(id, request.payload);
+
+      return {
+        status: 'success',
+        message: 'Catatan berhasil diperbarui',
+      };
+    } catch (error) {
+      const response = h.response({
+        status: 'fail',
+        message: error.message,
+      });
+      response.code(404);
+      return response;
+    }
   }
 
-  deleteNoteByIdHandler() {
+  deleteNoteByIdHandler(request, h) {
+    try {
+      const {id} = request.params;
 
+      this._service.deleteNoteById(id);
+      return {
+        status: 'success',
+        message: 'Catatan berhasil dihapus',
+      };
+    } catch (error) {
+      const response = h.response({
+        status: 'fail',
+        message: 'Catatan gagal dihapus. Id tidak ditemukan',
+      });
+      response.code(404);
+      return response;
+    }
   }
 }
+
+module.exports = NotesHandler;
